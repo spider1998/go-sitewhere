@@ -1,0 +1,11 @@
+{
+	"hardwareId": "7c1c95e9-eb01-422f-9aec-fd64094d01e3",
+	"type":"DeviceLocation",
+	"request": {
+		"latitude": "33.75",
+		"longitude": "-84.39",
+		"elevation": "0",
+		"updateState": true,
+		"eventDate": "2018-05-17T19:40:03.390Z"
+	}
+}
