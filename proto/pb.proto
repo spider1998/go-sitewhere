@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package proto;
+
+message DeviceEvent {
+    message Header {
+        string command = 1;
+        string deviceToken = 2;
+        string originator = 3;
+    }
+    message DeviceLocation {
+        double latitude = 4;
+        double longitude = 5;
+        double elevation = 6;
+        fixed64 eventDate = 7;
+        bool updateState = 8;
+        map<string, string> metadata = 9;
+    }
+}
+
+

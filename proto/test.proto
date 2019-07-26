@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package proto;
-
-message TestInfo{
-    string Authorization = 1;
-}

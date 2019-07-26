@@ -1,18 +1,25 @@
 package main
 
 import (
-	`fmt`
+	`fmt`/*
 	`git.sdkeji.top/share/sdlib/log`
-	`sdkeji/go_mqtt/api`
+	`sdkeji/go_mqtt/api`*/
+	`time`
 )
 func main() {
-	var API   *api.API
+	/*var API   *api.API
 	var Logger log.Logger
 	Logger, err := log.New(true, "test")
 	if err != nil {
 		panic(err)
 	}
-	API = api.NewAPI(Logger, "http://192.168.35.230:8080")
+	API = api.NewAPI(Logger, "http://192.168.35.230:8080")*/
+	s := time.Now()
+	fmt.Println(s.Local().Unix())
+	fmt.Println(s.Unix())
+
+
+
 
 	//----------------------------------------------------------------------------------------------------------------------
 
