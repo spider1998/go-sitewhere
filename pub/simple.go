@@ -3,7 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	p `github.com/golang/protobuf/proto`
+	proto2 `github.com/gogo/protobuf/proto`
+	//p `github.com/golang/protobuf/proto`
 	`sdkeji/go_mqtt/proto`
 	"sync"
 	"time"
@@ -47,10 +48,11 @@ func main() {
 func createTask(taskId int, wg *sync.WaitGroup) {
 	fmt.Println("ddd")
 	defer wg.Done()
-	opts := MQTT.NewClientOptions().AddBroker("tcp://192.168.35.230:1883")
+	opts := MQTT.NewClientOptions().AddBroker("tcp://192.168.35.230:1883").SetUsername("admin").SetPassword("password")
+	opts.SetCleanSession(true)
 	opts.SetClientID("sample1")
 	/*	opts.SetDefaultPublishHandler(f)*/
-	opts.SetConnectTimeout(time.Duration(60) * time.Second)
+	opts.SetConnectTimeout(time.Duration(5) * time.Second)
 
 	//创建连接
 	c := MQTT.NewClient(opts)
@@ -77,19 +79,19 @@ func createTask(taskId int, wg *sync.WaitGroup) {
 	//header.Command = proto.DeviceEvent_SendLocation
 	header.Command = proto.DeviceEvent_SendLocation
 
-	var body1 proto.DeviceEvent_DeviceMeasurement
-	body1.MeasurementName = &proto.GOptionalString{Value:"tmp"}
-	body1.MeasurementValue= &proto.GOptionalDouble{Value:42}
-	//body.Latitude = &proto.GOptionalDouble{Value:float64(39.31)}
-	//body.Longitude = &proto.GOptionalDouble{Value:float64(-85.52)}
+	var body1 proto.DeviceEvent_DeviceLocation
+	//body1.MeasurementName = &proto.GOptionalString{Value:"Latitude"}
+	//body1.MeasurementValue= &proto.GOptionalDouble{Value:42}
+	body1.Latitude = &proto.GOptionalDouble{Value:float64(39.31)}
+	body1.Longitude = &proto.GOptionalDouble{Value:float64(-85.52)}
 	body1.UpdateState = &proto.GOptionalBoolean{Value:true}
-	//body.Elevation = &proto.GOptionalDouble{Value:float64(2)}
+	body1.Elevation = &proto.GOptionalDouble{Value:float64(2)}
 	t := uint64(time.Now().Unix())
 	body1.EventDate = &proto.GOptionalFixed64{Value:t}
-	/*body.Metadata = map[string]string{
-		"latitude" :"30",
-		"longitude":"-98",
-	}*/
+	body1.Metadata = map[string]string{
+		"Latitude" :"30",
+		"Longitude":"-98",
+	}
 
 
 
@@ -103,11 +105,11 @@ func createTask(taskId int, wg *sync.WaitGroup) {
 	msg.Latitude = float64(30)
 	msg.Longitude = float64(-60)
 	msg.UpdateState = true*/
-	send1,err := p.Marshal(&header)
+	send1,err :=proto2.Marshal(&header)
 	if err != nil{
 		panic(err)
 	}
-	send2,err := p.Marshal(&body1)
+	send2,err := proto2.Marshal(&body1)
 	if err != nil{
 		panic(err)
 	}
@@ -121,6 +123,29 @@ func createTask(taskId int, wg *sync.WaitGroup) {
 	if !token.Wait() {
 		panic(token.Error())
 	}
-	c.Disconnect(250)
+	//c.Disconnect(250)
 	fmt.Println("task ok!!")
 }
+
+
+
+//[27 8 2 18 14 10 12 114 101 115 116 45 116 111 107 101 110 45 52 26 7 10 5 97 100 109 105 110
+// 38 10 10 10 8 76 97 116 105 116 117 100 101 18 9 9 0 0 0 0 0 0 69 64 26 9 9 2 209
+//  58 93 0 0 0 0 34 2 8 1]
+
+
+
+//[27 8 2 18 14 10 12 114 101 115 116 45 116 111 107 101 110 45 52 26 7 10 5 97 100 109 105 110
+// 48 10 9 9 72 225 122 20 174 167 67 64 18 9 9 225 122 20 174 71 97 85 192 26 9
+// 9 0 0 0 0 0 0 0 64 34 9 9
+// 239 216
+// 58 93 0 0 0 0 42 2 8 1]
+
+
+
+//[27 8 2 18 14 10 12 114 101 115 116 45 116 111 107 101 110 45 52 26 7 10 5 97 100 109 105 110
+// 48 10 9 9 72 225 122 20 174 167 67 64 18 9 9 225 122 20 174 71 97 85 192 26 9
+// 9 0 0 0 0 0 0 0 64 34 9 9
+// 92 217
+// 58 93 0 0 0 0 42 2 8 1]
+
