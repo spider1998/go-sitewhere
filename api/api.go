@@ -12,10 +12,10 @@ var client = &http.Client{
 
 type API struct {
 	log.Logger
-	gateway string
-	auth  AuthModule
-	device	DeviceModule
-	customer	 CustomerModule
+	gateway  string
+	auth     AuthModule
+	device   DeviceModule
+	customer CustomerModule
 }
 
 func NewAPI(logger log.Logger, gateway string) *API {
@@ -25,7 +25,7 @@ func NewAPI(logger log.Logger, gateway string) *API {
 	}
 	api.auth = AuthModule{api}
 	api.device = DeviceModule{api}
-	api.customer =  CustomerModule{api}
+	api.customer = CustomerModule{api}
 	return api
 }
 
@@ -33,7 +33,7 @@ func (api API) createURL(path string) string {
 	return api.gateway + path
 }
 
-func (api API) do(req *http.Request,token string) (*http.Response, error) {
+func (api API) do(req *http.Request, token string) (*http.Response, error) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", token)
 	req.Header.Set("X-SiteWhere-Tenant-Auth", "ymzn")
@@ -50,6 +50,6 @@ func (api API) Device() DeviceModule {
 	return api.device
 }
 
-func (api API)  Customer()  CustomerModule {
+func (api API) Customer() CustomerModule {
 	return api.customer
 }
