@@ -5,3 +5,5 @@
 
 
 *参考文档： https://sitewhere.io/docs/2.0.0/*
+
+*Github: https://github.com/sitewhere/sitewhere
