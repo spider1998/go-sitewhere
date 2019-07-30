@@ -6,7 +6,7 @@ import (
 	sitewhere "sdkeji/go_mqtt/proto"
 )
 
-func SiteWherePBMarshal(deviceEventHeader sitewhere.DeviceEvent_Header, deviceEventRequest proto.Message) (protoData []byte, err error) {
+func sitewhereMarshal(deviceEventHeader sitewhere.DeviceEvent_Header, deviceEventRequest proto.Message) (protoData []byte, err error) {
 	deviceHeaderData, err := proto.Marshal(&deviceEventHeader)
 	if err != nil {
 		return
@@ -77,7 +77,7 @@ func SiteWherePBMarshal(deviceEventHeader sitewhere.DeviceEvent_Header, deviceEv
 	return
 }
 
-func SiteWherePBUnMarshal(srcData []byte, deviceEventHeader *sitewhere.DeviceEvent_Header, deviceEventRequest proto.Message) (err error) {
+func sitwhereUnmarshal(srcData []byte, deviceEventHeader *sitewhere.DeviceEvent_Header, deviceEventRequest proto.Message) (err error) {
 	if len(srcData) == 0 {
 		err = errors.New("byte data is empty")
 		return
