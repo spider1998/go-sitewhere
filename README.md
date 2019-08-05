@@ -9,5 +9,5 @@
 *rest API参考文档： https://sitewhere.io/docs/2.0.0/api2/*
 
 *Github地址: https://github.com/sitewhere/sitewhere*
-
-[go moudle]
+   
+   
