@@ -50,11 +50,6 @@ func (e APIError) WithMessage(message string) APIError {
 }
 
 func (e APIError) WithDetails(details interface{}) APIError {
-	switch v := details.(type) {
-	case error:
-		e.Details = v.Error()
-	default:
-		e.Details = details
-	}
+	e.Details = details
 	return e
 }

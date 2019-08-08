@@ -1,6 +1,9 @@
 package api
 
-import "net/http"
+import (
+	"google.golang.org/genproto/googleapis/rpc/code"
+	"net/http"
+)
 
 type ModuleError struct {
 	Module string
@@ -26,3 +29,12 @@ var codeStatusMap = map[Code]int{
 	NotFound:            http.StatusNotFound,
 	MethodNotAllowed:    http.StatusMethodNotAllowed,
 }
+
+//grpc service错误码
+const (
+	WeakPasswordCode         code.Code = 100
+	OperatorExistCode        code.Code = 101
+	OperatorNotExistCode     code.Code = 102
+	InvalidPasswordCode      code.Code = 103
+	InvalidOperatorTokenCode code.Code = 104
+)

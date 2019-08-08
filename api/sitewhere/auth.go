@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/base64"
 	"encoding/json"
+	"git.sdkeji.top/share/sqmslib/api"
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
@@ -16,7 +17,7 @@ const (
 )
 
 type AuthModule struct {
-	api *API
+	api *SiteWhereAPI
 }
 
 func (m AuthModule) Authorization(name, pwd string) (token string, err error) {
@@ -42,6 +43,7 @@ func (m AuthModule) Authorization(name, pwd string) (token string, err error) {
 		return
 	}
 	defer resp.Body.Close()
+
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		err = errors.WithStack(err)
@@ -49,8 +51,7 @@ func (m AuthModule) Authorization(name, pwd string) (token string, err error) {
 	}
 
 	if resp.StatusCode != 200 {
-		//m.api.Warn("received error response.", "response", string(b))
-		var result APIError
+		var result api.APIError
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			err = errors.WithStack(err)

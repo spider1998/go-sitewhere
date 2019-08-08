@@ -1,4 +1,4 @@
-module sdkeji/go_mqtt
+module sdkeji/go_sitewhere
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.2.0
