@@ -5,6 +5,16 @@ import (
 	"testing"
 )
 
+func TestCustomerModule_GetCustomerTypeByToken(t *testing.T) {
+	Loggers, _ = log.New(true, "test")
+	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
+	res, err := Api.Customer().GetCustomerTypeByToken("mva-330")
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(res.Name)
+}
+
 func TestCustomerModule_CreateCustomerType(t *testing.T) {
 	Loggers, _ = log.New(true, "test")
 	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
@@ -111,4 +121,14 @@ func TestCustomerModule_DeleteCustomer(t *testing.T) {
 		t.Error(err)
 	}
 	t.Log(res.ID)
+}
+
+func TestCustomerModule_GetCustomer(t *testing.T) {
+	Loggers, _ = log.New(true, "test")
+	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
+	res, err := Api.Customer().DeleteCustomer("line-danfeng-shangzhou")
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(res.Name)
 }

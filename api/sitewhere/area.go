@@ -83,6 +83,57 @@ type CreateAreaRequest struct {
 	Token           string            `json:"token"` //类型token
 }
 
+//获取单个Area类型
+func (m AreaModule) GetAreaTypeByToken(tokens string) (res AreaType, err error) {
+	URL, err := url.Parse(m.api.createURL("/sitewhere/api/areatypes/" + tokens))
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	reqs, err := http.NewRequest(http.MethodGet, URL.String(), nil)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	token, err := m.api.auth.Authorization("admin", "password")
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	key := Bearer + " " + token
+
+	resp, err := m.api.do(reqs, key)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	defer resp.Body.Close()
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		//m.api.Warn("received error response.", "response", string(b))
+		var result api.APIError
+		err = json.Unmarshal(b, &result)
+		if err != nil {
+			err = errors.WithStack(err)
+			return
+		}
+		err = result.WithStatus(resp.StatusCode)
+		return
+	}
+	err = json.Unmarshal(b, &res)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	return
+}
+
 //获取Area类型列表
 func (m AreaModule) GetAreaTypeList() (areaTypes AreaTypeListResponse, err error) {
 	URL, err := url.Parse(m.api.createURL("/sitewhere/api/areatypes"))
@@ -499,6 +550,57 @@ func (m AreaModule) UpdateArea(typeToken string, request CreateAreaRequest) (res
 		return
 	}
 
+	err = json.Unmarshal(b, &res)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	return
+}
+
+//获取单个Area
+func (m AreaModule) GetArea(typeToken string) (res Area, err error) {
+	URL, err := url.Parse(m.api.createURL("/sitewhere/api/areas/" + typeToken))
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	reqs, err := http.NewRequest(http.MethodGet, URL.String(), nil)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	token, err := m.api.auth.Authorization("admin", "password")
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	key := Bearer + " " + token
+
+	resp, err := m.api.do(reqs, key)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	defer resp.Body.Close()
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		//m.api.Warn("received error response.", "response", string(b))
+		var result api.APIError
+		err = json.Unmarshal(b, &result)
+		if err != nil {
+			err = errors.WithStack(err)
+			return
+		}
+		err = result.WithStatus(resp.StatusCode)
+		return
+	}
 	err = json.Unmarshal(b, &res)
 	if err != nil {
 		err = errors.WithStack(err)

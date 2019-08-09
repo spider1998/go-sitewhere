@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"git.sdkeji.top/share/sqmslib/api"
+	"github.com/google/go-querystring/query"
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
@@ -72,13 +73,88 @@ type DeviceTypeListResponse struct {
 	} `json:"results"`
 }
 
+type QueryDeviceTypesCond struct {
+	IncludeAsset bool  `json:"includeAsset"`
+	Page         int32 `json:"page"`
+	PageSize     int32 `json:"pageSize"`
+}
+
+type QueryDevicesCond struct {
+	DeviceType        string `json:"deviceType"`
+	EndDate           string `json:"end_date"`
+	ExcludeAssigned   bool   `json:"exclude_assigned"` //是否排除已分配
+	IncludeDeviceType bool   `json:"includeDeviceType"`
+	IncludeAssignment bool   `json:"includeAssignment"`
+	Page              int32  `json:"page"`
+	PageSize          int32  `json:"pageSize"`
+}
+
+//获取单个Device类型
+func (m DeviceModule) GetDeviceTypeByToken(tokens string) (res DeviceType, err error) {
+	URL, err := url.Parse(m.api.createURL("/sitewhere/api/devicetypes/" + tokens))
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	reqs, err := http.NewRequest(http.MethodGet, URL.String(), nil)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	token, err := m.api.auth.Authorization("admin", "password")
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	key := Bearer + " " + token
+
+	resp, err := m.api.do(reqs, key)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	defer resp.Body.Close()
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		//m.api.Warn("received error response.", "response", string(b))
+		var result api.APIError
+		err = json.Unmarshal(b, &result)
+		if err != nil {
+			err = errors.WithStack(err)
+			return
+		}
+		err = result.WithStatus(resp.StatusCode)
+		return
+	}
+	err = json.Unmarshal(b, &res)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	return
+}
+
 //获取Device类型列表
-func (m DeviceModule) GetDeviceTypeList() (deviceTypes DeviceTypeListResponse, err error) {
+func (m DeviceModule) GetDeviceTypeList(req QueryDeviceTypesCond) (deviceTypes DeviceTypeListResponse, err error) {
 	URL, err := url.Parse(m.api.createURL("/sitewhere/api/devicetypes"))
 	if err != nil {
 		err = errors.WithStack(err)
 		return
 	}
+
+	q, err := query.Values(req)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	URL.RawQuery = q.Encode()
+
 	reqs, err := http.NewRequest(http.MethodGet, URL.String(), nil)
 	if err != nil {
 		err = errors.WithStack(err)
@@ -346,6 +422,7 @@ func (m DeviceModule) DeleteDevice(typeToken string) (res Device, err error) {
 		err = errors.WithStack(err)
 		return
 	}
+
 	reqs, err := http.NewRequest(http.MethodDelete, URL.String(), nil)
 	if err != nil {
 		err = errors.WithStack(err)
@@ -391,12 +468,18 @@ func (m DeviceModule) DeleteDevice(typeToken string) (res Device, err error) {
 }
 
 //获取Device列表
-func (m DeviceModule) GetDeviceList() (res DeviceListResponse, err error) {
+func (m DeviceModule) GetDeviceList(req QueryDevicesCond) (res DeviceListResponse, err error) {
 	URL, err := url.Parse(m.api.createURL("/sitewhere/api/devices"))
 	if err != nil {
 		err = errors.WithStack(err)
 		return
 	}
+	q, err := query.Values(req)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	URL.RawQuery = q.Encode()
 	reqs, err := http.NewRequest(http.MethodGet, URL.String(), nil)
 	if err != nil {
 		err = errors.WithStack(err)
@@ -496,38 +579,19 @@ func (m DeviceModule) UpdateDevice(typeToken string, request CreateNewDeviceRequ
 	return
 }
 
-type AddAssignmentsRequest struct {
-	AreaToken     string            `json:"areaToken"`     //位置token
-	AssetToken    string            `json:"assetToken"`    //领用人token
-	CustomerToken string            `json:"customerToken"` //项目token
-	DeviceToken   string            `json:"deviceToken"`   //设备token
-	Metadata      map[string]string `json:"metadata"`
-}
-type Assignments struct {
-	ID         string            `json:"id"` //ID
-	ActiveDate string            `json:"active_date"`
-	AreaID     string            `json:"areaId"`
-	AssetID    string            `json:"assetId"`
-	DeviceID   string            `json:"deviceId"`
-	Metadata   map[string]string `json:"metadata"`
-	Status     string            `json:"status"`
-	Token      string            `json:"token"` //设备token
-}
-
-func (m DeviceModule) DeviceAddAssignments(request AddAssignmentsRequest) (assignments Assignments, err error) {
-
-	b, err := json.Marshal(request)
+//获取单个Device
+func (m DeviceModule) GetDevice(typeToken string) (res Device, err error) {
+	URL, err := url.Parse(m.api.createURL("/sitewhere/api/devices/" + typeToken))
 	if err != nil {
 		err = errors.WithStack(err)
 		return
 	}
-	URL := m.api.createURL("/sitewhere/api/assignments")
-	m.api.Debug("create new device.", "url", URL)
-	req, err := http.NewRequest(http.MethodPost, URL, bytes.NewReader(b))
+	reqs, err := http.NewRequest(http.MethodGet, URL.String(), nil)
 	if err != nil {
 		err = errors.WithStack(err)
 		return
 	}
+
 	token, err := m.api.auth.Authorization("admin", "password")
 	if err != nil {
 		err = errors.WithStack(err)
@@ -535,21 +599,20 @@ func (m DeviceModule) DeviceAddAssignments(request AddAssignmentsRequest) (assig
 	}
 	key := Bearer + " " + token
 
-	resp, err := m.api.do(req, key)
+	resp, err := m.api.do(reqs, key)
 	if err != nil {
 		err = errors.WithStack(err)
 		return
 	}
 	defer resp.Body.Close()
-
-	b, err = ioutil.ReadAll(resp.Body)
+	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		err = errors.WithStack(err)
 		return
 	}
 
 	if resp.StatusCode != 200 {
-		fmt.Println(resp.StatusCode)
+		//m.api.Warn("received error response.", "response", string(b))
 		var result api.APIError
 		err = json.Unmarshal(b, &result)
 		if err != nil {
@@ -559,8 +622,7 @@ func (m DeviceModule) DeviceAddAssignments(request AddAssignmentsRequest) (assig
 		err = result.WithStatus(resp.StatusCode)
 		return
 	}
-
-	err = json.Unmarshal(b, &assignments)
+	err = json.Unmarshal(b, &res)
 	if err != nil {
 		err = errors.WithStack(err)
 		return

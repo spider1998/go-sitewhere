@@ -75,6 +75,57 @@ type CreateAssetTypeRequest struct {
 	Token           string            `json:"token"`
 }
 
+//获取单个Asset类型
+func (m AssetModule) GetAssetTypeByToken(tokens string) (res AssetType, err error) {
+	URL, err := url.Parse(m.api.createURL("/sitewhere/api/assettypes/" + tokens))
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	reqs, err := http.NewRequest(http.MethodGet, URL.String(), nil)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	token, err := m.api.auth.Authorization("admin", "password")
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	key := Bearer + " " + token
+
+	resp, err := m.api.do(reqs, key)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	defer resp.Body.Close()
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		//m.api.Warn("received error response.", "response", string(b))
+		var result api.APIError
+		err = json.Unmarshal(b, &result)
+		if err != nil {
+			err = errors.WithStack(err)
+			return
+		}
+		err = result.WithStatus(resp.StatusCode)
+		return
+	}
+	err = json.Unmarshal(b, &res)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	return
+}
+
 //获取Asset类型列表
 func (m AssetModule) GetAssetTypeList() (assetTypes AssetTypeListResponse, err error) {
 	URL, err := url.Parse(m.api.createURL("/sitewhere/api/assettypes"))
@@ -492,6 +543,57 @@ func (m AssetModule) UpdateAsset(typeToken string, request CreateAssetRequest) (
 	}
 
 	err = json.Unmarshal(b, &asset)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	return
+}
+
+//获取单个Asset
+func (m AssetModule) GetAsset(typeToken string) (res Area, err error) {
+	URL, err := url.Parse(m.api.createURL("/sitewhere/api/assets/" + typeToken))
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	reqs, err := http.NewRequest(http.MethodGet, URL.String(), nil)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	token, err := m.api.auth.Authorization("admin", "password")
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	key := Bearer + " " + token
+
+	resp, err := m.api.do(reqs, key)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+	defer resp.Body.Close()
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		//m.api.Warn("received error response.", "response", string(b))
+		var result api.APIError
+		err = json.Unmarshal(b, &result)
+		if err != nil {
+			err = errors.WithStack(err)
+			return
+		}
+		err = result.WithStatus(resp.StatusCode)
+		return
+	}
+	err = json.Unmarshal(b, &res)
 	if err != nil {
 		err = errors.WithStack(err)
 		return

@@ -22,10 +22,22 @@ func TestDeviceModule_CreateDeviceType(t *testing.T) {
 	t.Log(types.ID)
 }
 
+func TestDeviceModule_GetDeviceTypeByToken(t *testing.T) {
+	Loggers, _ = log.New(true, "test")
+	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
+	res, err := Api.Device().GetDeviceTypeByToken("bl5t2um21biral6gp970")
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(res.Name)
+}
+
 func TestDeviceModule_GetDeviceTypeList(t *testing.T) {
 	Loggers, _ = log.New(true, "test")
 	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
-	types, err := Api.Device().GetDeviceTypeList()
+	types, err := Api.Device().GetDeviceTypeList(QueryDeviceTypesCond{
+		IncludeAsset: false,
+	})
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,9 +76,9 @@ func TestDeviceModule_CreateDevice(t *testing.T) {
 	Loggers, _ = log.New(true, "test")
 	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
 	res, err := Api.Device().CreateDevice(CreateNewDeviceRequest{
-		Comments:        "测试设备",
-		DeviceTypeToken: "test-person-type",
-		Token:           "test-huojian-token",
+		Comments:        "1号坦克",
+		DeviceTypeToken: "bl5t2um21biral6gp970",
+		Token:           "test-tanke-token",
 		Metadata:        map[string]string{},
 	})
 	if err != nil {
@@ -78,7 +90,9 @@ func TestDeviceModule_CreateDevice(t *testing.T) {
 func TestDeviceModule_GetDeviceList(t *testing.T) {
 	Loggers, _ = log.New(true, "test")
 	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
-	res, err := Api.Device().GetDeviceList()
+	res, err := Api.Device().GetDeviceList(QueryDevicesCond{
+		ExcludeAssigned: false,
+	})
 	if err != nil {
 		t.Error(err)
 	}
@@ -108,4 +122,14 @@ func TestDeviceModule_DeleteDevice(t *testing.T) {
 		t.Error(err)
 	}
 	t.Log(res.ID)
+}
+
+func TestDeviceModule_GetDevice(t *testing.T) {
+	Loggers, _ = log.New(true, "test")
+	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
+	res, err := Api.Device().GetDevice("rest-token-3")
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(res.Token)
 }

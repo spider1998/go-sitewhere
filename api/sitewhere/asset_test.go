@@ -10,6 +10,16 @@ var (
 	Loggers log.Logger
 )
 
+func TestAssetModule_GetAssetTypeByToken(t *testing.T) {
+	Loggers, _ = log.New(true, "test")
+	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
+	res, err := Api.Asset().GetAssetTypeByToken("person")
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(res.Name)
+}
+
 func TestAssetModule_CreateAssetType(t *testing.T) {
 	Loggers, _ = log.New(true, "test")
 	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
@@ -116,4 +126,14 @@ func TestAssetModule_DeleteAsset(t *testing.T) {
 		t.Error(err)
 	}
 	t.Log(res.ID)
+}
+
+func TestAssetModule_GetAsset(t *testing.T) {
+	Loggers, _ = log.New(true, "test")
+	Api = NewSiteWhereAPI(Loggers, "http://192.168.35.230:8080")
+	res, err := Api.Asset().GetAsset("liufan")
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(res.Name)
 }

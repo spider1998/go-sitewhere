@@ -12,12 +12,13 @@ var client = &http.Client{
 
 type SiteWhereAPI struct {
 	log.Logger
-	gateway  string
-	auth     AuthModule
-	device   DeviceModule
-	customer CustomerModule
-	asset    AssetModule
-	area     AreaModule
+	gateway    string
+	auth       AuthModule
+	device     DeviceModule
+	customer   CustomerModule
+	asset      AssetModule
+	area       AreaModule
+	assignment AssignmentModule
 }
 
 func NewSiteWhereAPI(logger log.Logger, gateway string) *SiteWhereAPI {
@@ -30,6 +31,7 @@ func NewSiteWhereAPI(logger log.Logger, gateway string) *SiteWhereAPI {
 	api.customer = CustomerModule{api}
 	api.asset = AssetModule{api}
 	api.area = AreaModule{api}
+	api.assignment = AssignmentModule{api}
 	return api
 }
 
@@ -64,4 +66,8 @@ func (api SiteWhereAPI) Asset() AssetModule {
 
 func (api SiteWhereAPI) Area() AreaModule {
 	return api.area
+}
+
+func (api SiteWhereAPI) Assignment() AssignmentModule {
+	return api.assignment
 }
