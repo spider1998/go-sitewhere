@@ -55,13 +55,13 @@ type CreateCustomerRequest struct {
 	BorderColor         string            `json:"borderColor"`
 	CreatedDate         string            `json:"createdDate"` //创建时间
 	CustomerTypeToken   string            `json:"customerTypeToken"`
-	Description         string            `json:"description"` //描述
+	Description         string            `json:"description,omitempty"` //描述
 	ForegroundColor     string            `json:"foregroundColor"`
 	Icon                string            `json:"icon"`
-	ImageURL            string            `json:"imageUrl"` //图像链接
-	Metadata            map[string]string `json:"metadata"`
+	ImageURL            string            `json:"imageUrl,omitempty"` //图像链接
+	Metadata            map[string]string `json:"metadata,omitempty"`
 	Name                string            `json:"name"` //类型名称
-	ParentCustomerToken string            `json:"parentCustomerToken"`
+	ParentCustomerToken string            `json:"parentCustomerToken,omitempty"`
 	Token               string            `json:"token"` //类型token
 }
 
@@ -71,9 +71,9 @@ type CreateCustomerTypeRequest struct {
 	ForegroundColor             string            `json:"foregroundColor"`
 	Icon                        string            `json:"icon"`
 	ContainerCustomerTypeTokens []string          `json:"containerCustomerTypeTokens"`
-	Description                 string            `json:"description"`
-	ImageURL                    string            `json:"imageUrl"`
-	Metadata                    map[string]string `json:"metadata"`
+	Description                 string            `json:"description,omitempty"`
+	ImageURL                    string            `json:"imageUrl,omitempty"`
+	Metadata                    map[string]string `json:"metadata,omitempty"`
 	Name                        string            `json:"name"`
 	Token                       string            `json:"token"`
 }

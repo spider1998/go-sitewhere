@@ -55,9 +55,9 @@ type CreateAssetRequest struct {
 	ForegroundColor string            `json:"foregroundColor"` //--
 	Icon            string            `json:"icon"`            //--
 	AssetTypeToken  string            `json:"assetTypeToken"`
-	Description     string            `json:"description"`
-	ImageURL        string            `json:"imageUrl"`
-	Metadata        map[string]string `json:"metadata"`
+	Description     string            `json:"description,omitempty"`
+	ImageURL        string            `json:"imageUrl,omitempty"`
+	Metadata        map[string]string `json:"metadata,omitempty"`
 	Name            string            `json:"name"`
 	Token           string            `json:"token"`
 }
@@ -68,9 +68,9 @@ type CreateAssetTypeRequest struct {
 	ForegroundColor string            `json:"foregroundColor"` //--
 	Icon            string            `json:"icon"`            //--
 	AssetCategory   string            `json:"assetCategory"`   //"Person"\"Device"\"Hardware"
-	Description     string            `json:"description"`
-	ImageURL        string            `json:"imageUrl"`
-	Metadata        map[string]string `json:"metadata"`
+	Description     string            `json:"description,omitempty"`
+	ImageURL        string            `json:"imageUrl,omitempty"`
+	Metadata        map[string]string `json:"metadata,omitempty"`
 	Name            string            `json:"name"`
 	Token           string            `json:"token"`
 }

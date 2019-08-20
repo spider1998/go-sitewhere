@@ -17,9 +17,9 @@ type DeviceModule struct {
 }
 
 type CreateNewDeviceRequest struct {
-	Comments        string            `json:"comments"`        //备注名
+	Comments        string            `json:"comments,omitempty"`        //备注名
 	DeviceTypeToken string            `json:"deviceTypeToken"` //类型token
-	Metadata        map[string]string `json:"metadata"`
+	Metadata        map[string]string `json:"metadata,omitempty"`
 	Token           string            `json:"token"` //Token
 }
 
@@ -52,11 +52,11 @@ type CreateDeviceTypeRequest struct {
 	ForegroundColor string            `json:"foregroundColor"`
 	Icon            string            `json:"icon"`
 	ContainerPolicy string            `json:"containerPolicy"`
-	Description     string            `json:"description"`
-	ImageURL        string            `json:"imageUrl"`
+	Description     string            `json:"description,omitempty"`
+	ImageURL        string            `json:"imageUrl,omitempty"`
 	Name            string            `json:"name"`
 	Token           string            `json:"token"`
-	Metadata        map[string]string `json:"metadata"` //此项为必填
+	Metadata        map[string]string `json:"metadata,omitempty"`
 }
 
 type DeviceListResponse struct {

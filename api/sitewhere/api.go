@@ -19,6 +19,7 @@ type SiteWhereAPI struct {
 	asset      AssetModule
 	area       AreaModule
 	assignment AssignmentModule
+	command    CommandModule
 }
 
 func NewSiteWhereAPI(logger log.Logger, gateway string) *SiteWhereAPI {
@@ -32,6 +33,7 @@ func NewSiteWhereAPI(logger log.Logger, gateway string) *SiteWhereAPI {
 	api.asset = AssetModule{api}
 	api.area = AreaModule{api}
 	api.assignment = AssignmentModule{api}
+	api.command = CommandModule{api}
 	return api
 }
 
@@ -70,4 +72,8 @@ func (api SiteWhereAPI) Area() AreaModule {
 
 func (api SiteWhereAPI) Assignment() AssignmentModule {
 	return api.assignment
+}
+
+func (api SiteWhereAPI) Command() CommandModule {
+	return api.command
 }

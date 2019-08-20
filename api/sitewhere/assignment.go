@@ -17,11 +17,13 @@ type AssignmentModule struct {
 
 //绑定单个对象时其余字段必须为null(omitempty)
 type CreateAssignmentsRequest struct {
+	Token         string `json:"token,omitempty"`
+	Status        string            `json:"status,omitempty"`        //Active\Release
 	AreaToken     string            `json:"areaToken,omitempty"`     //区域token
 	AssetToken    string            `json:"assetToken,omitempty"`    //领用人token
 	CustomerToken string            `json:"customerToken,omitempty"` //项目token
-	DeviceToken   string            `json:"deviceToken"`             //设备token
-	Metadata      map[string]string `json:"metadata"`
+	DeviceToken   string            `json:"deviceToken,omitempty"`             //设备token
+	Metadata      map[string]string `json:"metadata,omitempty"`
 }
 
 type Assignment struct {
